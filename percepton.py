@@ -1,24 +1,40 @@
 import fileinput
-from numpy import array, dot, random
-from random import randint
+from numpy import array, random
+import random 
 
-def tresholdFunction(input):
-    dot = 0
-    for index, val in enumerate(input):
-        dot += val * w[index]
-    return 1 if dot > treshold else 0
+'''
+	/********************************
+		Activation function treshold
+		@params List inputs
+		@return 0 or 1
+	*********************************
+'''
+def tresholdFunction(inputs):
+    tres = 0
+    #print(inputs)
+    for i in range(0, len(inputs)):
+        tres += inputs[i] * w[i]
+    return 1 if tres > treshold else 0
 
+'''
+	/********************************
+		Update weights
+		@params List inputs
+		@return error
+	*********************************
+'''
 def getWeight(train):
 	output = train[1]
 	calculated = tresholdFunction(train[0])
+	#print("calculated", calculated, "outpu", output)
 	error = output - calculated
 	for index, val in enumerate(w):
-		val += error * train[index]
+		w[index] += error * train[0][index]
 	return error
 
 training = []
-training_result = []
 test = []
+w = []
 
 #Parser
 count = 0
@@ -32,26 +48,29 @@ for line in fileinput.input():
 	elif count >= 3 and count < 3 + m:
 		line = (line.rstrip('\n').rstrip('\r')).replace(" ", "")
 		line = line.split(",")
-		data = (array([float(value)for value in line[0:d]]), float(line[-1]))
+		arr = ([float(value) for value in line[0:-1]])
+		data = ((arr), float(line[-1]))
 		training.append(data)
 	else:
 		line = (line.rstrip('\n').rstrip('\r')).replace(" ", "")
 		line = line.split(",")
-		test.append(array([float(value)for value in line]))
+		arr = ([float(value) for value in line])
+		test.append(arr)
 	count += 1
 
-print(training)
-print(training_result)
-print(test)
+#Generate random weights
+for i in range(d):
+	w.append(random.randrange(0, 1))
 
-w = random.rand(d)
 rounds = 100
-treshold = randint(0, 5);
+treshold = random.randrange(1, 10);
 
-while (rounds > 0):
+#Until 100 rounds or error = 0 
+while (rounds >= 0):
     rounds -= 1
     error = 0
     for train in training:
+    	#http://lcn.epfl.ch/tutorial/english/perceptron/html/learning.html
         error += pow(getWeight(train), 2)
     if (error == 0):
         break
