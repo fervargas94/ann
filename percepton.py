@@ -1,5 +1,4 @@
 import fileinput
-from numpy import array, random
 import random 
 
 '''
